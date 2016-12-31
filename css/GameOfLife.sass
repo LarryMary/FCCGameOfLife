@@ -49,14 +49,10 @@
 //  quotes: "" ""
 //
 
-$backbrowned: #00013a
+
 $backBlack: #000000
-$backlit: #e32431
-$backred: #e32431
-$cherryBorder: 1px solid #79120f
-$buttonHighlight: #bccb66
 $fullWidth: 100%
-$tableText: #7fdff1
+$coolBlue: #00aeb3
 
 =border-radius($radius)
   -webkit-border-radius: $radius
@@ -66,13 +62,10 @@ $tableText: #7fdff1
 
 a 
   @extend .horCenter
-  img 
-    margin: 0
-  
 
 a:link 
   @extend .vertCenter
-  color: $tableText
+  color: $coolBlue
   text-decoration: none
 
 a:hover 
@@ -86,114 +79,68 @@ a:active
 
 body
   font-family: "consolas", "", serif
-  color: $tableText
+  color: $coolBlue
   background-color: $backBlack
   margin: 0
 
-
+h1
+  color: #00f7fc
+  margin: 5px
 
 .btn-primary
-  color: $tableText
-  background-image: linear-gradient(#002d7e, #006ffc)
+  color: #b3003c
+  background-image: linear-gradient($coolBlue ,#00f7fc)
   background-color: $backBlack
-  border-color: #00bdbf
+  border-color: #00a1a3
   padding: 2px
   margin: 2px
+  min-width: 20px
+  min-height: 28px
 
 .btn-primary:focus,
 .btn-primary.focus
   @extend .btn-primary
   color: black
   background-color: #1d66fc
-  background-image: linear-gradient(#00f7fc ,#00f7fc)
+  background-image: linear-gradient($coolBlue ,#00f7fc)
 
 .btn-primary:hover
   @extend .btn-primary.focus
-
 .btn-primary:active,
 .btn-primary.active,
 .btn-primary.active.focus, .btn-primary.active:focus, .btn-primary.active:hover, .btn-primary:active.focus, .btn-primary:active:focus, .btn-primary:active:hover, .open>.dropdown-toggle.btn-primary.focus, .open>.dropdown-toggle.btn-primary:focus, .open>.dropdown-toggle.btn-primary:hover
   @extend .btn-primary.focus
 
-.buttonAdd
-  display: flex
-  align-self: center
-  margin: 5px
-
-.buttonSave
-  display: flex
-  align-self: flex-end
-
-.cell
-  width: 100%
-  height: 100%
-  background-color: black
-  border-left: 1px solid #001a19
-  border-top: 1px solid #001a19
-  border-right: 1px solid #001a19
-  border-bottom: 1px solid #001a19
-  +border-radius(5px)
-
-
-//
-//.container
-//  .container-fixed();
-//
-//  @media (min-width: @screen-sm-min)
-//  width: 100%
-//
-//  @media (min-width: @screen-md-min)
-//  width: 100%
-//
-//  @media (min-width: @screen-lg-min)
-//  width: 100%
-
-
-img
-  margin:  0 6px 0 0
-
-h1
-  margin: 0
-  font-size: 5vh
-  text-align: center
-
-h2
-  margin: 0px
-  font-size: 3vh
-//text-align: center
-
-h5
-  font-size: 6vh
-
-textarea
-  border-color: #00d6b2
-  background-color: black
-  height: 4em
-
-.addRecipeModal
-  background-color: $backBlack
-
 .buttonArea
   display: flex
   justify-content: space-between
   padding: 5px
+  width: 500px
 
 .buttonAreaTail
   @extend .flexcontainer-row
   justify-content: center
 
+
+.cell
+  width: 100%
+  height: 100%
+  background-color: black
+  border-style: ridge
+  border-width: 1px
+  border-color: #000e47
+  +border-radius(5px)
+
 .gridArea
   display: flex
   justify-content: center
   margin: 10px
+  +border-radius(5px)
 
 .gridHolder
   display: flex
   flex-flow: column
-  //border-right: 1px solid #00f7fc
-  //border-bottom: 1px solid #00bdbf
-  //width: 100%
-
+  border: 1px solid $coolBlue
 
 .flexcontainer-column
   display: -webkit-flex
@@ -211,79 +158,6 @@ textarea
   display: flex
   justify-content: center
 
-.logo
-  @extend .vertCenter
-
-
-.modal-container
-  position: relative
-  background-color: $backBlack
-
-.modal-container .modal, .modal-container .modal-backdrop
-  position: absolute
-  background-color: black
-
-.modal-content
-  background-color: $backbrowned
-
-.modal-body
-  margin: 10px
-  display: flex
-  flex-direction: column
-  align-items: flex-start
-
-.recipe
-
-  margin: 5px
-  border: $cherryBorder
-  +border-radius(5px)
-
-
-.recipeArea
-  @extend .flexcontainer-column
-  //background-color: $backbrowned
-  width: 100%
-  height: 100%
-  float: left
-  word-wrap: normal
-  padding: 5px
-
-.recipeCollapsed
-  @extend .recipe
-  background-color: $backbrowned
-
-.recipeDetails
-  background-color: $backbrowned
-  width: 100%
-  padding: 5px
-
-.recipeExpanded
-  @extend .recipe
-  @extend .flexcontainer-column
-  background-color: $backbrowned
-  border-color: #951612
-  margin: 5px
-
-.recipeField
-  background-color: $backbrowned
-
-.recipeTitle
-  align-self: center
-  text-align: center
-  background-color: $backbrowned
-  width: 100%
-  padding: 5px
-  &:hover
-    background-color: #a31a23
-    color: $buttonHighlight
-//color: $backbrowner
-
-
-.recipeSubTitle
-  background-color: $backBlack
-  width: 100%
-  padding: 5px
-
 .row
   display: flex
 
@@ -294,36 +168,25 @@ textarea
   display: flex
   align-items: center
 
-#addRecipeModal
-  //colors everything behind the modal
-  background-color: $backbrowned
-
-#banner
+#bottomMatter
+  margin-left: auto
+  margin-right: auto
+  width: 500px
   display: flex
-  justify-content: space-between
-  background-color: black
-  height: 5vh
-  width: $fullWidth
-  border: $cherryBorder
-  img
-    //display: flex
-    //justify-content: center
-    height: 10vh
-    width: 50%
-    margin: 20px
-
+  flex-flow: column
 
 #buttons
   display: flex
   justify-content: space-between
 
 #buttonControlArea
-  display: flex
-  justify-content: space-between
+  @extend #buttons
+
+#buttonMiscArea
+  @extend #buttons
 
 #buttonViewArea
-  display: flex
-  justify-content: center
+  @extend #buttons
   #buttonViewZoomArea
     margin: 2px
 
@@ -333,9 +196,6 @@ textarea
   #buttonViewSpeedArea
     margin: 2px
 
-#buttonMiscArea
-  display: flex
-  justify-content: space-around
 
 #container
   @extend .horCenter
@@ -343,28 +203,21 @@ textarea
   margin: 0
   padding: 0
 
+#feedback
+  display: flex
+  flex-flow: column
+  align-items: center
 
 #page
   display: flex
+  align-items: center
   flex-flow: column
-
-  margin-top: 5vh
-  margin-bottom: 5vh
+  margin-top: 2vh
+  margin-bottom: 2vh
   margin-right: auto
   margin-left: auto
   overflow: hidden
 
-#recipeList 
-  width: 80%
 
-#tableBox 
-  width: $fullWidth
-  //background-color: blue
-  border: $cherryBorder
-
-#title 
-  display: flex
-  justify-content: center
-  border: $cherryBorder
 
 

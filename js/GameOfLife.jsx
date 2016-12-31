@@ -16,19 +16,45 @@ class Cell extends React.Component {
             backGroundColor: '#000000',
             changed: false
         };
-
         this.changeState = this.changeState.bind(this);
         this.sendUpLivelynessChange = this.sendUpLivelynessChange.bind(this);
     }
 
+    componentWillMount() {
+
+        let tempArray = this.props.gameArray;
+        var bgColor = tempArray[this.props.cellIdx][this.props.cellIdy][0] ? '#00FC05' : 'black';
+
+        this.setState({
+            alive: tempArray[this.props.cellIdx][this.props.cellIdy][0],
+            backGroundColor: bgColor,
+            changed: tempArray[this.props.cellIdx][this.props.cellIdy][1]
+        });
+    }
+
+    componentWillReceiveProps(){
+
+        let stateChangeFromAnimation = this.props.gameArray;
+        let bgColor = stateChangeFromAnimation[this.props.cellIdx][this.props.cellIdy][0] ? '#00FC05' : 'black';
+        let age = stateChangeFromAnimation[this.props.cellIdx][this.props.cellIdy][1];
+        if(age === -1) bgColor = '#410019';
+        if(age === 1) bgColor = '#00FF4D';
+        if(age  > 1) bgColor = '#00FF97';
+
+        this.setState({
+            alive: stateChangeFromAnimation[this.props.cellIdx][this.props.cellIdy][0],
+            backGroundColor: bgColor,
+            changed: stateChangeFromAnimation[this.props.cellIdx][this.props.cellIdy][1]
+        });
+    }
+
     render() {
 
-
-        //var cellColor = this.state.alive ? 'red' : 'black';
+        let cellDimensions = (500 / this.props.mainState.columns);
         const cellStyle = {
             backgroundColor: this.state.backGroundColor,
-            height: (this.props.mainState.zoom * 2 + 5) + 'px',
-            width: (this.props.mainState.zoom * 2 + 5) + 'px'
+            height: cellDimensions + 'px',
+            width: cellDimensions + 'px'
 
         };
         return (
@@ -41,43 +67,6 @@ class Cell extends React.Component {
         );
     }
 
-    componentWillMount() {
-        let tempArray = this.props.gameArray;
-        var bgColor = tempArray[this.props.cellIdx][this.props.cellIdy][0] ? '#18CB05' : 'black';
-
-        this.setState({
-            alive: tempArray[this.props.cellIdx][this.props.cellIdy][0],
-            backGroundColor: bgColor,
-            changed: tempArray[this.props.cellIdx][this.props.cellIdy][1]
-        });
-    }
-
-    componentWillReceiveProps(){
-        let stateChangeFromAnimation = this.props.gameArray;
-        let bgColor = stateChangeFromAnimation[this.props.cellIdx][this.props.cellIdy][0] ? '#18CB05' : 'black';
-        let age = stateChangeFromAnimation[this.props.cellIdx][this.props.cellIdy][1];
-        if(age === -1) bgColor = '#320600';
-        if(age === 1) bgColor = '#166905';
-        if(age  > 1) bgColor = '#113705';
-
-
-
-
-        this.setState({
-            alive: stateChangeFromAnimation[this.props.cellIdx][this.props.cellIdy][0],
-            backGroundColor: bgColor,
-            changed: stateChangeFromAnimation[this.props.cellIdx][this.props.cellIdy][1]
-        });
-    }
-
-    sendUpLivelynessChange() {
-        this.props.sendUpLivelynessChange(  this.props.cellIdx,
-            this.props.cellIdy,
-            this.state.alive,
-            this.state.changed);
-
-    }
-
     changeState() {
 
         let tempState = this.state;
@@ -88,31 +77,35 @@ class Cell extends React.Component {
             tempState.changed = 0;
         } else if (tempState.alive === false) {
             tempState.alive = true;
-            tempState.backGroundColor = '#18CB05';
+            tempState.backGroundColor = '#00FC05';
             tempState.changed = 1;
         }
+
         this.setState({
             alive: tempState.alive,
             backGroundColor: tempState.backGroundColor,
             changed: tempState.changed
         });
+
         this.sendUpLivelynessChange();
     }
-    componentMount(){
+
+    sendUpLivelynessChange() {
+
+        this.props.sendUpLivelynessChange(  this.props.cellIdx,
+            this.props.cellIdy,
+            this.state.alive,
+            this.state.changed);
+
     }
-
-
 }
 
 class Row extends React.Component {
 
     constructor(props) {
+
         super(props);
-
-        this.deletey = this.deletey.bind(this);
-        this.editey = this.editey.bind(this);
         this.recieveLivelynessChange = this.recieveLivelynessChange.bind(this);
-
     }
 
     render() {
@@ -140,19 +133,7 @@ class Row extends React.Component {
         );
     }
 
-    recieveLivelynessChange(cellIdx, cellIdy, alive, changed) {
-        //boardArray[cellIdx] = [cellIdy, alive, changed];
-        //console.log('grid-level ' + cellIdx, boardArray[cellIdx]);
-    }
-
-    deletey(id) {
-
-        this.props.onDelete(id);
-        this.forceUpdate();
-    }
-    editey(id) {
-        this.props.onEdit(id);
-    }
+    recieveLivelynessChange(cellIdx, cellIdy, alive, changed) {}
 }
 
 class Grid extends React.Component {
@@ -160,18 +141,11 @@ class Grid extends React.Component {
     constructor(props) {
 
         super(props);
-
-        //this.upadateGameBoard = this.upadateGameBoard.bind(this);
-        this.editey = this.editey.bind(this);
-        //this.step = this.step.bind(this);
         this.recieveLivelynessChange = this.recieveLivelynessChange.bind(this);
-
     }
 
     render() {
 
-        //var width = this.props.width;
-        //var height = this.props.height;
         var height = this.props.rows;
         var rows = [];
 
@@ -192,23 +166,19 @@ class Grid extends React.Component {
             </div>
         );
     }
-    recieveLivelynessChange(cellIdx, cellIdy, alive, changed) {
-        boardArray[cellIdx] = [cellIdy, alive, changed];
-        console.log('grid-level ' + cellIdx, boardArray[cellIdx]);
-    }
 
     recieveCellData(cellId, alive, changed) {
         console.log("cellId: " + cellId + " alive: " + alive+ " changed: " + changed);
 
     }
-    editey(id) {
-        this.props.onEdit(id);
+
+    recieveLivelynessChange(cellIdx, cellIdy, alive, changed) {
+        boardArray[cellIdx] = [cellIdy, alive, changed];
+        console.log('grid-level ' + cellIdx, boardArray[cellIdx]);
     }
 }
 
 class Game extends React.Component {
-
-
 
     constructor(props) {
         super(props);
@@ -219,10 +189,11 @@ class Game extends React.Component {
             rows: 30,
             columns: 40,
             time: 0,
-            framesPerSecond: 15,
+            framesPerSecond: 5,
             randomize: false,
             generations: 0,
-            population: 0
+            population: 0,
+            populationColor: 'green'
         }
 
         this.clearBoard = this.clearBoard.bind(this);
@@ -231,19 +202,15 @@ class Game extends React.Component {
         this.refreshGrid = this.refreshGrid.bind(this);
         this.slowDown = this.slowDown.bind(this);
         this.speedUp = this.speedUp.bind(this);
-        this.moreCells = this.moreCells.bind(this);
-        this.lessCells = this.lessCells.bind(this);
         this.startAnimation = this.startAnimation.bind(this);
         this.stopAnimation = this.stopAnimation.bind(this);
         this.zoomIn = this.zoomIn.bind(this);
         this.zoomOut = this.zoomOut.bind(this);
-
-
     }
 
     componentWillMount() {
 
-        this.clearBoard(false);
+        this.clearBoard(true);
 
         if (!this.state.randomize) {
 
@@ -255,12 +222,63 @@ class Game extends React.Component {
                 gameArray:boardArray
             });
         }
+    }
 
+    render() {
+        const popColor = {
+            color: this.state.populationColor
+        };
+        return (
+            <div id="page" className = "container">
+                <h1>Game of Life</h1>
+                <div className="gridArea">
+                    <Grid   className="grid"
+                            rows = {this.state.rows}
+                            columns = {this.state.columns}
+                            gameArray = {this.state.gameArray}
+                            recieveLivelynessChange = {this.recieveLivelynessChange}
+                            mainState = {this.state}
+                    />
+                </div>
+                <div id = "bottomMatter">
+                    <div id="buttons">
+                        <div id = "buttonControlArea">
+                            <Button active bsStyle = "primary" className = "fa fa-play" id="buttonStart" onClick={this.startAnimation}></Button>
+                            <Button active bsStyle = "primary" className = "fa fa-stop " id="buttonStop" onClick={this.stopAnimation}></Button>
+                            <Button active bsStyle = "primary" className = "fa fa-trash" id="buttonClear" onClick={() => this.clearBoard(false, null, null)}></Button>
+                        </div>
+                        <div id = "buttonViewArea">
+                            <div id = "buttonViewZoomArea">
+                                <Button active bsStyle = "primary" className = "fa fa-search-plus " id="zoomIn" onClick={this.zoomIn}></Button>
+                                    {this.state.columns + ' X ' + this.state.rows}
+                                <Button active bsStyle = "primary" className = "fa fa-search-minus " id="zoomOut" onClick={this.zoomOut}></Button>
+                            </div>
+                            <div id = "buttonViewSpeedArea">
+                                <Button active bsStyle = "primary" className = "fa fa-fast-backward " id="zoomIn" onClick={this.slowDown}></Button>
+                                {this.state.framesPerSecond + ' fps'}
+                                <Button active bsStyle = "primary" className = "fa fa-fast-forward " id="zoomOut" onClick={this.speedUp}></Button>
+                            </div>
+                        </div>
+                        <div id = "buttonMiscArea">
+                            <Button active bsStyle = "primary" className = "" id="buttonRandomize" onClick={this.randomize}>Randomize</Button>
+                        </div>
+                    </div>
+                    <div id = "feedback">
+                        <div className = "">
+                            {'Generations: ' + this.state.generations}
+                        </div>
+                        <div className = "">
+                            {'Population: ' }
+                            <span  style = {popColor}>
+                                {this.state.population}
+                            </span>
+                        </div>
+                    </div>
 
-        //this.getR_Pentomino( 2,  2);
-        //this.getGlider( 3,  3);
-        //this.getBlinker( 0,  1);
-
+                </div>
+            </div>
+        );
+        let randomize = true;
     }
 
     clearBoard(randomize, tempRows, tempColumns) {
@@ -270,78 +288,86 @@ class Game extends React.Component {
         boardArray = [];
         let cleanBoardArray = [];
         let population = 0;
+
         for (var i = 0; i < columns; i++) {
             cleanBoardArray.push([]);
             for (var j = 0; j < rows; j++) {
                 if(randomania === true) {
                     let randomState = Math.round(Math.random()) ? true : false;
                     if (randomState === true) population++;
-                    let history = 0;
+                    let cellHistory = 0;
                         //second array position corresponds to recentlyChanged but that will always be the same
                         //as randomState when creating a new random array
-                    cleanBoardArray[i].push([randomState, history]);
+                    cleanBoardArray[i].push([randomState, cellHistory]);
                 } else {
                     cleanBoardArray[i].push([false, 0]);
                 }
             }
         }
         boardArray = cleanBoardArray;
-
         this.setState({
             gameArray: cleanBoardArray,
             randomize: false,
             generations: 0,
-            population: population
+            population: population,
+            populationColor: 'green'
         });
         this.forceUpdate();
     }
 
-    zoomIn() {
-        this.stopAnimation();
-        var tempZoom = this.state.zoom + 1;
-        this.setState({
-            zoom: tempZoom
-        });
-        this.lessCells();
+    determineLivelyness(oldBoard, x, y, livelyness){
 
+        let neighbors = 0;
+        const board = oldBoard;
 
-        //var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
-        //var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-        //this.startAnimation();
+        let xM = (x === 0) ?  this.state.columns - 1  : x - 1;
+        let yM = (y === 0) ?  this.state.rows - 1 : y - 1;
+        let xP = (x === this.state.columns - 1) ? 0 : x + 1;
+        let yP = (y === this.state.rows - 1) ? 0 : y + 1;
+
+        if (board[xM][yM][0] === true) neighbors++;
+        if (board[x][yM][0] === true) neighbors++;
+        if (board[xP][yM][0] === true) neighbors++;
+        if (board[xM][y][0] === true) neighbors++;
+        if (board[xP][y][0] === true) neighbors++;
+        if (board[xM][yP][0] === true) neighbors++;
+        if (board[x][yP][0] === true) neighbors++;
+        if (board[xP][yP][0] === true) neighbors++;
+
+        let toReturn;
+
+        if (livelyness === true) {
+            let belively = false;
+            if (1 < neighbors && neighbors < 4) {
+                belively = true;
+            }
+            toReturn = belively;
+        }
+        if(livelyness === false) {
+            let belively = false;
+            if (neighbors === 3) {
+                belively = true;
+            }
+            toReturn = belively;
+        };
+        return toReturn;
     }
-    zoomOut() {
-        this.stopAnimation();
-        var tempZoom = this.state.zoom - 1;
-        this.setState({
-            zoom: tempZoom
-        });
-        this.moreCells();
-        //this.startAnimation();
-        //var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
-        //var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
 
+    determineLongevity(livelyness, longevity){
+
+        let currentAge = longevity;
+        if (livelyness === true) {
+            currentAge++;
+        } else {
+            if (longevity > 0) {
+                currentAge = -1;
+            } else {
+                currentAge = 0;
+            }
+        }
+        return currentAge;
     }
-    moreCells() {
-        this.stopAnimation();
-        let tempRows = this.state.rows + 1;
-        let tempColumns = this.state.columns + 1;
-        this.setState({
-            rows: tempRows,
-            columns: tempColumns
-        }, this.clearBoard(true,tempRows,tempColumns));
 
-
-
-    }
-    lessCells() {
-        this.stopAnimation();
-        let tempRows = this.state.rows - 1;
-        let tempColumns = this.state.columns - 1;
-        this.setState({
-            rows: tempRows,
-            columns: tempColumns
-        }, this.clearBoard(true));
-    }
     getR_Pentomino(x,y){
 
         let xP = (x === this.state.columns - 1) ? 0 : x + 1;
@@ -386,89 +412,11 @@ class Game extends React.Component {
         boardArray[x + 2][y + 1][0] = true;
     }
 
-    render()
-    {
-        return (
-            <div id="page" className = "container">
-                <div className="gridArea">
-                    <Grid   className="grid"
-                            rows = {this.state.rows}
-                            columns = {this.state.columns}
-                            gameArray = {this.state.gameArray}
-                            recieveLivelynessChange = {this.recieveLivelynessChange}
-                            mainState = {this.state}
-                    />
-                </div>
-                <div id="buttons">
-                    <div id = "buttonControlArea">
-                        <Button active bsStyle = "primary" className = "fa fa-play" id="buttonStart" onClick={this.startAnimation}></Button>
-                        <Button active bsStyle = "primary" className = "fa fa-stop " id="buttonStop" onClick={this.stopAnimation}></Button>
-                        <Button active bsStyle = "primary" className = "fa fa-eraser " id="buttonClear" onClick={() => this.clearBoard(false, null, null)}></Button>
-                        <Button active bsStyle = "primary" className = "fa fa-step-forward " id="buttonStep" onClick={this.refreshGrid}></Button>
-                    </div>
-                    <div id = "buttonViewArea">
-                        <div id = "buttonViewZoomArea">
-                            <Button active bsStyle = "primary" className = "fa fa-search-plus " id="zoomIn" onClick={this.zoomIn}></Button>
-                            {this.state.zoom}
-                            <Button active bsStyle = "primary" className = "fa fa-search-minus " id="zoomOut" onClick={this.zoomOut}></Button>
-                        </div>
-                        <div id = "buttonViewSizeArea">
-                            <Button active bsStyle = "primary" className = "fa fa-expand " id="moreCells" onClick={this.moreCells}></Button>
-                            {this.state.columns + ' X ' + this.state.rows}
-                            <Button active bsStyle = "primary" className = "fa fa-compress " id="lessCells" onClick={this.lessCells}></Button>
-                        </div>
-                        <div id = "buttonViewSpeedArea">
-                            <Button active bsStyle = "primary" className = "fa fa-fast-backward " id="zoomIn" onClick={this.slowDown}></Button>
-                            {this.state.framesPerSecond + ' fps'}
-                            <Button active bsStyle = "primary" className = "fa fa-fast-forward " id="zoomOut" onClick={this.speedUp}></Button>
-                        </div>
-                    </div>
-                    <div id = "buttonMiscArea">
-                        <Button active bsStyle = "primary" className = " " id="zoomOut" onClick={this.randomize}>Randomize</Button>
-                    </div>
-                </div>
-                <div>
-                    {'Generations: ' + this.state.generations}
-                </div>
-                <div>
-                    {'Population: ' + this.state.population}
-                </div>
-            </div>
-        );
-        let randomize = true;
-    }
     randomize() {
         console.log('randomizing');
         this.stopAnimation();
-        //this.clearBoard();
-        let randomize = true;
-        this.clearBoard(randomize);
-
-        //this.startAnimation();
-        //this.setState({
-        //    randomize: false
-        //});
-
-
-    }
-    speedUp() {
-        //this.stopAnimation();
-        var tempSpeed = this.state.framesPerSecond + 1;
-        this.setState({
-            framesPerSecond: tempSpeed
-        });
-        console.log('framerate: ' + this.state.framesPerSecond);
-
-        //this.startAnimation();
-    }
-    slowDown() {
-        //this.stopAnimation();
-        var tempSpeed = this.state.framesPerSecond - 1;
-        this.setState({
-            framesPerSecond: tempSpeed
-        });
-        console.log('framerate: ' + this.state.framesPerSecond);
-        //this.startAnimation();
+        let randomBoard = true;
+        this.clearBoard(randomBoard);
     }
 
     recieveLivelynessChange(cellIdx, cellIdy, alive, changed) {
@@ -479,9 +427,6 @@ class Game extends React.Component {
         this.setState({
             gameArray: boardArray
         });
-
-        //console.log('this.state.gameArray['+cellIdx+']['+cellIdy+'] '+this.state.gameArray[cellIdx][cellIdy]);
-
     }
 
     refreshGrid() {
@@ -508,13 +453,16 @@ class Game extends React.Component {
             }
         }
 
+        let previousPopulation = this.state.population;
+        let changeInPopulation =  (previousPopulation > population) ? 'red' : 'green';
+
         this.setState({
             gameArray: newBoard,
             generations: this.state.generations + 1,
-            population: population
+            population: population,
+            populationColor: changeInPopulation
         });
-        var count = 0;
-        count++;
+
         console.log('newBoard');
         var currentTime = new Date().getTime();
         var timeElapsed = currentTime - this.time;
@@ -524,69 +472,57 @@ class Game extends React.Component {
         }
         this.intervalID = requestAnimationFrame(this.refreshGrid);
     }
-    determineLongevity(livelyness, longevity){
-        let currentAge = longevity;
-        if (livelyness === true) {
-            currentAge++;
-        } else {
-            if (longevity > 0) {
-                currentAge = -1;
-            } else {
-                currentAge = 0;
-            }
-        }
-        return currentAge;
+
+    slowDown() {
+
+        var tempSpeed = this.state.framesPerSecond - 1;
+        this.setState({
+            framesPerSecond: tempSpeed
+        });
+        console.log('framerate: ' + this.state.framesPerSecond);
     }
 
+    speedUp() {
 
-    determineLivelyness(oldBoard, x, y, livelyness){
-
-        let neighbors = 0;
-        const board = oldBoard;
-        let xM = (x === 0) ?  this.state.columns - 1  : x - 1;
-        let yM = (y === 0) ?  this.state.rows - 1 : y - 1;
-        let xP = (x === this.state.columns - 1) ? 0 : x + 1;
-        let yP = (y === this.state.rows - 1) ? 0 : y + 1;
-
-        if (board[xM][yM][0] === true) neighbors++;
-        if (board[x][yM][0] === true) neighbors++;
-        if (board[xP][yM][0] === true) neighbors++;
-        if (board[xM][y][0] === true) neighbors++;
-        if (board[xP][y][0] === true) neighbors++;
-        if (board[xM][yP][0] === true) neighbors++;
-        if (board[x][yP][0] === true) neighbors++;
-        if (board[xP][yP][0] === true) neighbors++;
-
-        let toReturn;
-        if (livelyness === true) {
-            let belively = false;
-            if (1 < neighbors && neighbors < 4) {
-                belively = true;
-            }
-            toReturn = belively;
-        }
-        if(livelyness === false) {
-            let belively = false;
-            if (neighbors === 3) {
-                belively = true;
-            }
-            toReturn = belively;
-        };
-        return toReturn;
+        var tempSpeed = this.state.framesPerSecond + 1;
+        this.setState({
+            framesPerSecond: tempSpeed
+        });
+        console.log('framerate: ' + this.state.framesPerSecond);
     }
 
     startAnimation(){
         console.log('startedA');
         requestAnimationFrame(this.refreshGrid);
-
     }
 
     stopAnimation(){
         console.log('stoppedA');
         cancelAnimationFrame(this.intervalID);
     }
-}
 
+    zoomIn() {
+
+        this.stopAnimation();
+        let tempRows = this.state.rows - 3;
+        let tempColumns = this.state.columns - 4;
+        this.setState({
+            rows: tempRows,
+            columns: tempColumns
+        }, this.clearBoard(true));
+    }
+
+    zoomOut() {
+
+        this.stopAnimation();
+        let tempRows = this.state.rows + 3;
+        let tempColumns = this.state.columns + 4;
+        this.setState({
+            rows: tempRows,
+            columns: tempColumns
+        }, this.clearBoard(true,tempRows,tempColumns));
+    }
+}
 
 ReactDOM.render(
     <Game />,
